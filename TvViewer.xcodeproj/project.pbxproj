@@ -34,9 +34,9 @@
 			path = TvViewer;
 			sourceTree = "<group>";
 		};
-		C7F9BA462ED518B900A85869 /* ScreeenShots */ = {
+		C7F9BA462ED518B900A85869 /* ScreenShots */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
-			path = ScreeenShots;
+			path = ScreenShots;
 			sourceTree = "<group>";
 		};
 		C7F9BA802ED580CF00A85869 /* PreloadDB */ = {
@@ -61,7 +61,7 @@
 			isa = PBXGroup;
 			children = (
 				C7F9BA802ED580CF00A85869 /* PreloadDB */,
-				C7F9BA462ED518B900A85869 /* ScreeenShots */,
+				C7F9BA462ED518B900A85869 /* ScreenShots */,
 				C70CFB552ED2FF100073ACB0 /* README.md */,
 				C73DAD452ED2A4A800C8BC65 /* TvViewer */,
 				C73DAD442ED2A4A800C8BC65 /* Products */,
@@ -93,7 +93,7 @@
 			);
 			fileSystemSynchronizedGroups = (
 				C73DAD452ED2A4A800C8BC65 /* TvViewer */,
-				C7F9BA462ED518B900A85869 /* ScreeenShots */,
+				C7F9BA462ED518B900A85869 /* ScreenShots */,
 				C7F9BA802ED580CF00A85869 /* PreloadDB */,
 			);
 			name = TvViewer;
