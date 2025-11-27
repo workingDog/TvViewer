@@ -19,6 +19,20 @@ class PlayerManager {
     var isPlaying = false
     var showVideo = false
 
-    init() { }
+    init() {
+        Task {
+            await keepPlayInBackground()
+        }
+    }
+    
+    func keepPlayInBackground() async {
+        let session = AVAudioSession.sharedInstance()
+        do {
+            try session.setCategory(.playback, mode: .default)
+            try session.setActive(true)
+        } catch {
+            print("---> AudioSession error:", error)
+        }
+    }
     
 }

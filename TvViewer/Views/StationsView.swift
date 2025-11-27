@@ -104,7 +104,7 @@ struct StationView: View {
             }
         }
         .background(colorsModel.stationBackColor)
-        .glassEffect(.regular.tint(colorsModel.stationBackColor).interactive(), in: RoundedRectangle(cornerRadius: 12)) // for iOS26+
+    //    .glassEffect(.regular.tint(colorsModel.stationBackColor).interactive(), in: RoundedRectangle(cornerRadius: 12)) // for iOS26+
         .clipShape(RoundedRectangle(cornerRadius: 12))
         .fullScreenCover(isPresented: $showWeb) {
             WebViewScreen(showWeb: $showWeb, station: station)
