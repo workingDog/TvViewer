@@ -17,11 +17,12 @@ struct SettingsView: View {
         @Bindable var selector = selector
         @Bindable var colorsModel = colorsModel
         
-        ScrollView {
-            ZStack {
-                colorsModel.gradient.ignoresSafeArea()
+        ZStack {
+            colorsModel.gradient.ignoresSafeArea()
+            
+            VStack(spacing: 1) {
                 
-                VStack(spacing: 20) {
+                VStack(spacing: 1) {
                     HStack {
                         Button("Done") {
                             showSettings = false
@@ -30,8 +31,10 @@ struct SettingsView: View {
                         .padding(10)
                         Spacer()
                     }
-                    
                     Text("Settings").font(.largeTitle)
+                }
+                
+                ScrollView {
                     
                     HStack {
                         Text("Selection border color ")
@@ -104,12 +107,12 @@ struct SettingsView: View {
                     
                     Spacer()
                 }
-                .padding(12)
+                .padding(5)
             }
-        }
-        .onDisappear {
-            selector.storeSettings()
-            colorsModel.storeSettings()
+            .onDisappear {
+                selector.storeSettings()
+                colorsModel.storeSettings()
+            }
         }
     }
     
