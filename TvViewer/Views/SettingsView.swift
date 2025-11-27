@@ -17,91 +17,95 @@ struct SettingsView: View {
         @Bindable var selector = selector
         @Bindable var colorsModel = colorsModel
         
-        ZStack {
-            colorsModel.gradient.ignoresSafeArea()
-            
-            VStack(spacing: 20) {
-                Button("Done") {
-                    showSettings = false
-                }
-                .buttonStyle(.bordered)
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .padding(6)
+        ScrollView {
+            ZStack {
+                colorsModel.gradient.ignoresSafeArea()
                 
-                Text("Settings").font(.largeTitle)
-                
-                HStack {
-                    Text("Selection border color ")
-                    Image(systemName: "inset.filled.square.dashed")
-                        .font(.title)
-                        .foregroundStyle(colorsModel.borderColor)
-                    ColorPicker("", selection: $colorsModel.borderColor)
-                        .labelsHidden()
+                VStack(spacing: 20) {
+                    HStack {
+                        Button("Done") {
+                            showSettings = false
+                        }
+                        .buttonStyle(.borderedProminent)
+                        .padding(10)
+                        Spacer()
+                    }
+                    
+                    Text("Settings").font(.largeTitle)
+                    
+                    HStack {
+                        Text("Selection border color ")
+                        Image(systemName: "inset.filled.square.dashed")
+                            .font(.title)
+                            .foregroundStyle(colorsModel.borderColor)
+                        ColorPicker("", selection: $colorsModel.borderColor)
+                            .labelsHidden()
+                        Spacer()
+                    }
+                    
+                    HStack {
+                        Text("Countries back color ")
+                        Image(systemName: "backpack.fill")
+                            .font(.title)
+                            .foregroundStyle(colorsModel.countryBackColor)
+                        ColorPicker("", selection: $colorsModel.countryBackColor)
+                            .labelsHidden()
+                        Spacer()
+                    }
+                    
+                    HStack {
+                        Text("Stations back color ")
+                        Image(systemName: "backpack.fill")
+                            .font(.title)
+                            .foregroundStyle(colorsModel.stationBackColor)
+                        ColorPicker("", selection: $colorsModel.stationBackColor)
+                            .labelsHidden()
+                        Spacer()
+                    }
+                    
+                    HStack {
+                        Text("Background color ")
+                        Image(systemName: "backpack.fill")
+                            .font(.title)
+                            .foregroundStyle(colorsModel.backColor)
+                        ColorPicker("", selection: $colorsModel.backColor)
+                            .labelsHidden()
+                        Spacer()
+                    }
+                    
+                    HStack {
+                        Text("Favourite Color ")
+                        Image(systemName: "heart.fill")
+                            .font(.title)
+                            .foregroundStyle(colorsModel.favouriteColor)
+                        ColorPicker("", selection: $colorsModel.favouriteColor)
+                            .labelsHidden()
+                        Spacer()
+                    }
+                    
+                    HStack {
+                        Text("Network Color ")
+                        Image(systemName: "network")
+                            .font(.title)
+                            .foregroundStyle(colorsModel.netColor)
+                        ColorPicker("", selection: $colorsModel.netColor)
+                            .labelsHidden()
+                        Spacer()
+                    }
+                    
+                    HStack {
+                        Text("Station select sound  ")
+                        Image(systemName: "hand.tap.fill")
+                            .font(.title)
+                            .foregroundStyle(selector.pingSound ? Color.accentColor : .black)
+                        Toggle("", isOn: $selector.pingSound)
+                        Spacer()
+                    }.fixedSize()
+                    
                     Spacer()
                 }
-                
-                HStack {
-                    Text("Countries back color ")
-                    Image(systemName: "backpack.fill")
-                        .font(.title)
-                        .foregroundStyle(colorsModel.countryBackColor)
-                    ColorPicker("", selection: $colorsModel.countryBackColor)
-                        .labelsHidden()
-                    Spacer()
-                }
-                
-                HStack {
-                    Text("Stations back color ")
-                    Image(systemName: "backpack.fill")
-                        .font(.title)
-                        .foregroundStyle(colorsModel.stationBackColor)
-                    ColorPicker("", selection: $colorsModel.stationBackColor)
-                        .labelsHidden()
-                    Spacer()
-                }
-                
-                HStack {
-                    Text("Background color ")
-                    Image(systemName: "backpack.fill")
-                        .font(.title)
-                        .foregroundStyle(colorsModel.backColor)
-                    ColorPicker("", selection: $colorsModel.backColor)
-                        .labelsHidden()
-                    Spacer()
-                }
-
-                HStack {
-                    Text("Favourite Color ")
-                    Image(systemName: "heart.fill")
-                        .font(.title)
-                        .foregroundStyle(colorsModel.favouriteColor)
-                    ColorPicker("", selection: $colorsModel.favouriteColor)
-                        .labelsHidden()
-                    Spacer()
-                }
-                
-                HStack {
-                    Text("Network Color ")
-                    Image(systemName: "network")
-                        .font(.title)
-                        .foregroundStyle(colorsModel.netColor)
-                    ColorPicker("", selection: $colorsModel.netColor)
-                        .labelsHidden()
-                    Spacer()
-                }
-
-                HStack {
-                    Text("Station select sound  ")
-                    Image(systemName: "hand.tap.fill")
-                        .font(.title)
-                        .foregroundStyle(selector.pingSound ? Color.accentColor : .black)
-                    Toggle("", isOn: $selector.pingSound)
-                    Spacer()
-                }.fixedSize()
-                
-                Spacer()
+                .padding(12)
             }
-            .padding(12)
         }
         .onDisappear {
             selector.storeSettings()

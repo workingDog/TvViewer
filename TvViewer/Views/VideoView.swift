@@ -23,7 +23,7 @@ struct VideoView: View {
                     Button("Done") {
                         playerManager.showVideo = false
                     }
-                    .buttonStyle(.bordered)
+                    .buttonStyle(.borderedProminent)
                     .padding(10)
                     Spacer()
                 }
