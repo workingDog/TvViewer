@@ -12,22 +12,29 @@ import AVKit
 
 struct VideoView: View {
     @Environment(PlayerManager.self) var playerManager
-
+    
     var body: some View {
-        VStack {
-            Button("Done") {
-                playerManager.showVideo = false
-            }
-            .buttonStyle(.bordered)
-            .frame(maxWidth: .infinity, alignment: .leading)
-            .padding(6)
-
+        ZStack {
             VideoPlayer(player: playerManager.player)
-                .onAppear { playerManager.player?.play() }
+                .ignoresSafeArea()
+            
+            VStack {
+                HStack {
+                    Button("Done") {
+                        playerManager.showVideo = false
+                    }
+                    .buttonStyle(.bordered)
+                    .padding(10)
+                    Spacer()
+                }
+                Spacer()
+            }
         }
+        .onAppear { playerManager.player?.play() }
         .onDisappear {
             playerManager.player?.pause()
             playerManager.station = nil
+            playerManager.showVideo = false
         }
     }
 }
