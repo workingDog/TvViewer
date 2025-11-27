@@ -41,6 +41,8 @@ struct SwiftDataHelper {
         }
     }
     
+    
+    // for testing
     func saveImage(_ image: UIImage, id: String) -> String {
         let filename = "\(id).png"
         let url = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask)[0]
@@ -52,6 +54,7 @@ struct SwiftDataHelper {
         return filename
     }
     
+    // for testing
     func loadImage(filename: String?) -> UIImage? {
         guard let filename else { return nil }
         let url = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask)[0]
