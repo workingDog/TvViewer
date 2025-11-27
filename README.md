@@ -26,7 +26,7 @@ Tap on the **globe** icon of a TV station to bring its internet home page, if it
 
 This project uses SwiftUI and SwiftData to store the downloaded data obtained from the [IPTV API](https://github.com/iptv-org/api).
 
-Currently setup for iOS-26, but can easily work on older iOS or MacOS with simple changes.
+Currently setup for iOS-26, but can easily work on older iOS (remove the .glassEffect) or MacOS with simple changes.
 
 
 ## References
