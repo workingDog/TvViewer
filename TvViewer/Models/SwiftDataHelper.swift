@@ -22,7 +22,6 @@ struct SwiftDataHelper {
         // if already in SwiftData
         if let existing = try? context.fetch(descriptor).first {
             existing.isFavourite = station.isFavourite
-            return
         } else {
             // else insert this station in SwiftData
             context.insert(station)

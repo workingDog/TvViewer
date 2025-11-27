@@ -28,7 +28,7 @@ struct TvViewerApp: App {
     var sharedModelContainer: ModelContainer = {
         let appSupportDir = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).last
 
-        // find or install your preloaded DB
+        // find or install our preloaded DB
         let dbURL = TvViewerApp.preloadDBIfNeeded()
         print("-----> database dbURL: \(dbURL)")
 

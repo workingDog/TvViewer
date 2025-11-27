@@ -22,69 +22,68 @@ struct StationView: View {
     
     @State private var showConfirm = false
     @State private var showWeb = false
-    @State private var showVideo = false
     
     @State private var logoIcon: UIImage?
     
     var body: some View {
-            VStack {
-                HStack {
-                    Button {
-                        if station.isFavourite {
-                            // Ask for confirmation before changing it
-                            showConfirm = true
-                        } else {
-                            station.isFavourite = true
-                            SwiftDataHelper.updateOrInsert(station: station, in: modelContext)
-                        }
-                    } label: {
-                        Image(systemName: station.isFavourite ? "heart.fill" : "heart.slash")
-                            .resizable()
-                            .foregroundStyle(colorsModel.favouriteColor)
-                            .frame(width: 30, height: 30)
-                            .padding(5)
-                    }.buttonStyle(.borderless)
-                    
+        VStack {
+            HStack {
+                Button {
+                    if station.isFavourite {
+                        // Ask for confirmation before changing it
+                        showConfirm = true
+                    } else {
+                        station.isFavourite = true
+                        SwiftDataHelper.updateOrInsert(station: station, in: modelContext)
+                    }
+                } label: {
+                    Image(systemName: station.isFavourite ? "heart.fill" : "heart.slash")
+                        .resizable()
+                        .foregroundStyle(colorsModel.favouriteColor)
+                        .frame(width: 30, height: 30)
+                        .padding(5)
+                }.buttonStyle(.borderless)
+                
                     .confirmationDialog("Remove from favourites", isPresented: $showConfirm) {
                         Button("Yes") {
-                                station.isFavourite = false
-                                SwiftDataHelper.findAndRemove(station: station, in: modelContext)
+                            station.isFavourite = false
+                            SwiftDataHelper.findAndRemove(station: station, in: modelContext)
                         }
                         Button("No", role: .cancel) { }
                     } message: { Text("Really remove this station from favourites?") }
-                    
-                    Spacer()
-                    
-                    Text(station.categories.first ?? StationTag.general.rawValue)
-                    
-                    Spacer()
-                    
-                    Button {
-                        showWeb = true
-                    } label: {
-                        Image(systemName: "network")
-                            .resizable()
-                            .foregroundColor(colorsModel.netColor)
-                            .frame(width: 30, height: 30)
-                            .padding(5)
-                    }.buttonStyle(.borderless)
-                }
                 
-                Group {
-                    if let img = logoIcon {
-                        Image(uiImage: img).resizable()
-                    } else {
-                        Image(uiImage: TVLogo.defaultImg()).resizable()
-                    }
-                }
-                .scaledToFit()
-                .frame(width: 44, height: 44)
-
+                Spacer()
                 
-                Text(station.name)
-                    .lineLimit(1)
-                    .padding(5)
+                Text(station.categories.first ?? StationTag.general.rawValue)
+                
+                Spacer()
+                
+                Button {
+                    showWeb = true
+                } label: {
+                    Image(systemName: "network")
+                        .resizable()
+                        .foregroundColor(colorsModel.netColor)
+                        .frame(width: 30, height: 30)
+                        .padding(5)
+                }.buttonStyle(.borderless)
             }
+            
+            Group {
+                if let img = logoIcon {
+                    Image(uiImage: img).resizable()
+                } else {
+                    Image(uiImage: TVLogo.defaultImg()).resizable()
+                }
+            }
+            .scaledToFit()
+            .frame(width: 44, height: 44)
+            
+            
+            Text(station.name)
+                .lineLimit(1)
+                .padding(5)
+        }
         .contentShape(RoundedRectangle(cornerRadius: 12))
         .onTapGesture {
             if selector.pingSound {
@@ -100,7 +99,7 @@ struct StationView: View {
                     let item = AVPlayerItem(url: url)
                     playerManager.player = AVPlayer(playerItem: item)
                     playerManager.isPlaying = true
-                    showVideo = true
+                    playerManager.showVideo = true
                 }
             }
         }
@@ -109,21 +108,6 @@ struct StationView: View {
         .clipShape(RoundedRectangle(cornerRadius: 12))
         .fullScreenCover(isPresented: $showWeb) {
             WebViewScreen(showWeb: $showWeb, station: station)
-        }
-        .fullScreenCover(isPresented: $showVideo, onDismiss: {
-            playerManager.player?.pause()
-            playerManager.station = nil
-        }) {
-            VStack {
-                Button("Done") {
-                    showVideo = false
-                }
-                .buttonStyle(.bordered)
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .padding(6)
-                Divider()
-                VideoPlayer(player: playerManager.player)
-            }
         }
         .task {
             logoIcon = await station.logoImage()
@@ -195,4 +179,3 @@ struct OldWebView: UIViewRepresentable {
     
     final class Coordinator: NSObject, WKNavigationDelegate { }
 }
-

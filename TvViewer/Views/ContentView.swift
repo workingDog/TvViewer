@@ -21,36 +21,41 @@ struct ContentView: View {
     @State private var selector = Selector()
 
     @Query private var stations: [TVStation]
-    
+
     var body: some View {
         ZStack(alignment: .top) {
             colorsModel.gradient.ignoresSafeArea()
                 .animation(.easeInOut(duration: 0.4), value: selector.view)
             
-            VStack {
-                ToolsView()
-                
-                if selector.view != .countries {
-                    FilterToolsView().fixedSize()
+            if playerManager.showVideo {
+                VideoView()
+            } else {
+                VStack {
+                    ToolsView()
+                    
+                    if selector.view != .countries {
+                        FilterToolsView().fixedSize()
+                    }
+                    
+                    switch selector.view {
+                        case .favourites: StationListView(stations: stations.filter({$0.isFavourite}))
+                            
+                        case .countries: CountriesView(stations: stations)
+                            
+                        case .stations: SearchStationView(stations: stations)
+                    }
+                    
                 }
-                
-                switch selector.view {
-                    case .favourites: StationListView(stations: stations.filter({$0.isFavourite}))
-                        
-                    case .countries: CountriesView(stations: stations)
-                        
-                    case .stations: SearchStationView(stations: stations)
-                }
-
             }
-            .onAppear {
-                selector.retrieveSettings()
-                colorsModel.retrieveSettings()
-            }
+        }
+        .onAppear {
+            selector.retrieveSettings()
+            colorsModel.retrieveSettings()
+            print("\n----> stations: \(stations.count)\n")
         }
         .environment(playerManager)
         .environment(selector)
     }
-
+    
 }
 

@@ -17,6 +17,7 @@ class PlayerManager {
     var player: AVPlayer?
     var station: TVStation?
     var isPlaying = false
+    var showVideo = false
 
     init() { }
     

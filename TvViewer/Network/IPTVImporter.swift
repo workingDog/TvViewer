@@ -66,18 +66,18 @@ actor IPTVImporter {
         print("---> logos: \(logos.count)")
         let streams: [TVStream] = try await fetchJSON("streams")
         print("---> streams: \(streams.count)")
-        let guides: [TVGuide] = try await fetchJSON("guides")
-        print("---> guides: \(guides.count)")
+//        let guides: [TVGuide] = try await fetchJSON("guides")
+//        print("---> guides: \(guides.count)")
         let categories: [TVCategory] = try await fetchJSON("categories")
         print("---> categories: \(categories.count)")
         let languages: [TVLanguage] = try await fetchJSON("languages")
         print("---> languages: \(languages.count)")
         let countries: [TVCountry] = try await fetchJSON("countries")
         print("---> countries: \(countries.count)")
-        let subdivisions: [TVSubdivision] = try await fetchJSON("subdivisions")
-        print("---> subdivisions: \(subdivisions.count)")
-        let cities: [TVCity] = try await fetchJSON("cities")
-        print("---> cities: \(cities.count)")
+//        let subdivisions: [TVSubdivision] = try await fetchJSON("subdivisions")
+//        print("---> subdivisions: \(subdivisions.count)")
+//        let cities: [TVCity] = try await fetchJSON("cities")
+//        print("---> cities: \(cities.count)")
         let regions: [TVRegion] = try await fetchJSON("regions")
         print("---> regions: \(regions.count)")
         let timezones: [TVTimezone] = try await fetchJSON("timezones")
@@ -120,7 +120,7 @@ actor IPTVImporter {
         print("---> filteredStations.count: \(filteredStations.count)")
 
 
-        print("---> skip Link guides: \(guides.count)")
+//        print("---> skip Link guides: \(guides.count)")
         
 //        for guide in guides {
 //            if let channelID = guide.channel, let station = stationsByID[channelID] {
