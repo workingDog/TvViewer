@@ -10,14 +10,14 @@ import SwiftUI
 struct CountriesView: View {
     @Environment(\.modelContext) private var modelContext
     @Environment(ColorsModel.self) var colorsModel
+    @Environment(Selector.self) var selector
 
     let stations: [TVStation]
     
     @State private var countries: [TVCountry] = []
-    @State private var searchText = ""
     
     private var filteredCountries: [TVCountry] {
-        let trimmed = searchText.trimmingCharacters(in: .whitespacesAndNewlines)
+        let trimmed = selector.searchCountry.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !trimmed.isEmpty else { return countries }
         return countries.filter { country in
             let cleanName = country.name.trimmingCharacters(in: .whitespacesAndNewlines)
@@ -26,6 +26,7 @@ struct CountriesView: View {
     }
     
     var body: some View {
+        @Bindable var selector = selector
         NavigationStack {
             ZStack {
                 colorsModel.gradient.ignoresSafeArea()
@@ -37,7 +38,7 @@ struct CountriesView: View {
                     .listRowSeparator(.hidden)
                     .listRowInsets(EdgeInsets(top: 5, leading: 5, bottom: 5, trailing: 5))
                 }
-                .searchable(text: $searchText, placement: .navigationBarDrawer, prompt: "Search countries")
+                .searchable(text: $selector.searchCountry, placement: .navigationBarDrawer, prompt: "Search countries")
                 .scrollContentBackground(.hidden)
                 .background(Color.clear)
             }

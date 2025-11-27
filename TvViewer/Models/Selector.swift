@@ -15,6 +15,7 @@ class Selector {
     var view: ViewTypes = .favourites
     var tag: StationTag = .all
     var searchStation: String = ""
+    var searchCountry: String = ""
     var pingSound: Bool = true
     
     static let keyTag: String = "tag"
