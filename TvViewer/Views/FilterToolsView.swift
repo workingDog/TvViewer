@@ -8,10 +8,8 @@ import SwiftUI
 
 
 struct FilterToolsView: View {
-    @Environment(Selector.self) var selector
     
     var body: some View {
-        @Bindable var selector = selector
         VStack {
             HStack {
                 Spacer()
