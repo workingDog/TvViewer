@@ -23,7 +23,7 @@ struct StationView: View {
     @State private var showConfirm = false
     @State private var showWeb = false
     
-    @State private var logoIcon: UIImage?
+    @State private var logoIcon: UIImage = LogoService.defaultTvLogo()
     
     var body: some View {
         VStack {
@@ -69,16 +69,10 @@ struct StationView: View {
                 }.buttonStyle(.borderless)
             }
             
-            Group {
-                if let img = logoIcon {
-                    Image(uiImage: img).resizable()
-                } else {
-                    Image(uiImage: TVLogo.defaultImg()).resizable()
-                }
-            }
-            .scaledToFit()
-            .frame(width: 44, height: 44)
-            
+            Image(uiImage: logoIcon)
+                .resizable()
+                .scaledToFit()
+                .frame(width: 44, height: 44)
             
             Text(station.name)
                 .lineLimit(1)
@@ -110,7 +104,7 @@ struct StationView: View {
             WebViewScreen(showWeb: $showWeb, station: station)
         }
         .task {
-            logoIcon = await station.logoImage()
+            logoIcon = await LogoService.shared.tvLogoImage(for: station)
         }
     }
     
