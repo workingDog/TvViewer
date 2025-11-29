@@ -1,5 +1,5 @@
 //
-//  StationsView.swift
+//  StationView.swift
 //  TvViewer
 //
 //  Created by Ringo Wathelet on 2025/11/24.

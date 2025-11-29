@@ -12,14 +12,9 @@ import AVKit
 import MediaPlayer
 
 
-import SwiftUI
-import MediaPlayer
-
-
 struct VideoView: View {
     @Environment(PlayerManager.self) var playerManager
     @Environment(ColorsModel.self) var colorsModel
-    
     
     var body: some View {
         ZStack {
@@ -59,7 +54,7 @@ struct AutoHidingVolumeSlider: View {
     @State private var isInteracting: Bool = false
 
     // idle delay before hiding
-    private let hideDelay: Duration = .seconds(2)
+    private let hideDelay: Duration = .seconds(3)
 
     var body: some View {
         HStack {
@@ -68,19 +63,9 @@ struct AutoHidingVolumeSlider: View {
             SystemVolumeSlider()
                 .frame(width: 250, height: 25)
                 .padding(8)
-                .opacity(isVisible ? 1 : 0.25)
+                .opacity(isVisible ? 1 : 0.3)
                 .animation(.easeOut(duration: 0.3), value: isVisible)
                 .onAppear { startIdleWatcher() }
-            
-//            // macOS continuous hover callback
-//                .onContinuousHover { phase in
-//                    switch phase {
-//                    case .active(_): userIsActive()
-//                    case .ended: userStopped()
-//                    }
-//                }
-            
-            // iOS touch-detection
                 .contentShape(Rectangle())
                 .gesture(
                     DragGesture(minimumDistance: 0)

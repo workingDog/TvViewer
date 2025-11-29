@@ -71,7 +71,7 @@ final class TVStation: Codable {
     var alt_names: [String]
     var network: String?
     var owners: [String]
-    var country: String
+    var country: String   // <-- this is country code
     var categories: [String]
     var is_nsfw: Bool
     var launched: String?
@@ -84,6 +84,7 @@ final class TVStation: Codable {
     @Relationship(deleteRule: .cascade) var logos: [TVLogo] = []
     @Relationship(deleteRule: .cascade) var streams: [TVStream] = []
     @Relationship(deleteRule: .cascade) var guides: [TVGuide] = []
+    
     @Relationship(deleteRule: .cascade) var categoriesRel: [TVCategory] = []
     @Relationship(deleteRule: .cascade) var languagesRel: [TVLanguage] = []
     @Relationship(deleteRule: .cascade) var countryRel: TVCountry?
@@ -703,7 +704,7 @@ final class TVTimezone: Codable {
         self.init(
             id: try c.decode(String.self, forKey: .id),
             utc_offset: try c.decode(String.self, forKey: .utc_offset),
-            countries: try c.decodeIfPresent([String].self, forKey: .countries) ?? []
+            countries: try c.decode([String].self, forKey: .countries)
         )
     }
 
