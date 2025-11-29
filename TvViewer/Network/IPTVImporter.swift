@@ -8,7 +8,7 @@ import Foundation
 import SwiftData
 
 /*
-  add this to ContentView
+  temporarily add this to ContentView
  //        .task {
  //            let importer = IPTVImporter(context: modelContext)
  //            do {
@@ -17,6 +17,8 @@ import SwiftData
  //                print(error)
  //            }
  //        }
+ 
+ // also look at TvViewerApp.swift for copying the pre-load db
  
  */
 
@@ -46,7 +48,7 @@ actor IPTVImporter {
 
     // use this to import all the data from the iptvServer
     // and save everything into SwiftData "tvstations.sqlite"
-    // takes some times to complete
+    // takes time to complete
     func doImportAll() async throws {
         do {
             try await importAll()
@@ -85,40 +87,45 @@ actor IPTVImporter {
         
         print("---> importAll start")
 
-        // Fetch raw stations
+        // fetch raw stations (the channels)
         let stations: [TVStation] = try await fetchJSON("channels")
         print("---> stations: \(stations.count)")
         
-        // Fetch all other endpoints
+        // fetch all other data
         let feeds: [TVFeed] = try await fetchJSON("feeds")
         print("---> feeds: \(feeds.count)")
         let logos: [TVLogo] = try await fetchJSON("logos")
         print("---> logos: \(logos.count)")
         let streams: [TVStream] = try await fetchJSON("streams")
         print("---> streams: \(streams.count)")
-//        let guides: [TVGuide] = try await fetchJSON("guides")
-//        print("---> guides: \(guides.count)")
-        let categories: [TVCategory] = try await fetchJSON("categories")
-        print("---> categories: \(categories.count)")
-        let languages: [TVLanguage] = try await fetchJSON("languages")
-        print("---> languages: \(languages.count)")
         let countries: [TVCountry] = try await fetchJSON("countries")
         print("---> countries: \(countries.count)")
-//        let subdivisions: [TVSubdivision] = try await fetchJSON("subdivisions")
-//        print("---> subdivisions: \(subdivisions.count)")
-//        let cities: [TVCity] = try await fetchJSON("cities")
-//        print("---> cities: \(cities.count)")
         let regions: [TVRegion] = try await fetchJSON("regions")
         print("---> regions: \(regions.count)")
         let timezones: [TVTimezone] = try await fetchJSON("timezones")
         print("---> timezones: \(timezones.count)")
+
+        // not usefull, skip
+//        let categories: [TVCategory] = try await fetchJSON("categories")
+//        print("---> categories: \(categories.count)")
+//        let languages: [TVLanguage] = try await fetchJSON("languages")
+//        print("---> languages: \(languages.count)")
+        //        let subdivisions: [TVSubdivision] = try await fetchJSON("subdivisions")
+        //        print("---> subdivisions: \(subdivisions.count)")
+        //        let cities: [TVCity] = try await fetchJSON("cities")
+        //        print("---> cities: \(cities.count)")
+        //        let guides: [TVGuide] = try await fetchJSON("guides")
+        //        print("---> guides: \(guides.count)")
         
-        print()
+        print("\n---> Linking \n")
 
         // Index stations by ID for linking
         let stationsByID = Dictionary(uniqueKeysWithValues: stations.map { ($0.id, $0) })
 
-        // Link feeds, logos, streams, guides
+        //
+        // Link feeds, logos, streams, guides to the corresponding station
+        //
+        
         for feed in feeds {
             if let station = stationsByID[feed.channel] {
                 station.feeds.append(feed)
@@ -135,6 +142,7 @@ actor IPTVImporter {
         }
         print("---> Link logos")
         
+        // only streams with non-nil channel reference
         let filteredStreams = streams.filter({$0.channel != nil})
         print("---> filteredStreams.count: \(filteredStreams.count)")
 
@@ -146,12 +154,11 @@ actor IPTVImporter {
         }
         print("---> Link streams")
         
+        // only stations with at least one stream, no use otherwise
         let filteredStations = stations.filter({$0.streams.count > 0})
         print("---> filteredStations.count: \(filteredStations.count)")
 
-
 //        print("---> skip Link guides: \(guides.count)")
-        
 //        for guide in guides {
 //            if let channelID = guide.channel, let station = stationsByID[channelID] {
 //                station.guides.append(guide)
@@ -162,29 +169,28 @@ actor IPTVImporter {
         
         // count the number of stations in each country
         for country in countries {
-            country.totalStations = stations.filter( { $0.country == country.code }).count
+            country.totalStations = filteredStations.filter( { $0.country == country.code }).count
         }
 
         var progress = 0
-        // Link categories, languages, country, subdivisions, cities, regions, timezones
+        // Link categories, country, regions, timezones
         for station in filteredStations {
-            // categoriesRel
-            station.categoriesRel = categories.filter { station.categories.contains($0.id) }
-            // languagesRel
-            station.languagesRel = languages.filter { station.alt_names.contains($0.code) || station.owners.contains($0.name) } // optional heuristic
             // countryRel
             if let country = countries.first(where: { $0.code == station.country }) {
                 station.countryRel = country
             }
-            // subdivisions
-//            station.subdivisions = subdivisions.filter { $0.country == station.country }
-//            // cities
-//            station.cities = cities.filter { $0.country == station.country }
-//            // regions
+            // regions
             station.regions = regions.filter { $0.countries.contains(station.country) }
             // timezones
             station.timezonesRel = timezones.filter { $0.countries.contains(station.country) }
             
+            // categoriesRel
+            //            station.categoriesRel = categories.filter { station.categories.contains($0.id) }
+            // subdivisions
+            //            station.subdivisions = subdivisions.filter { $0.country == station.country }
+            //            // cities
+            //            station.cities = cities.filter { $0.country == station.country }
+
             if progress.isMultiple(of: 1000) {
                   print("------> progress: \(progress)")
               }

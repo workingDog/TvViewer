@@ -28,6 +28,11 @@ This project uses SwiftUI and SwiftData to store the downloaded data obtained fr
 
 Currently setup for iOS-26, but can easily work on older iOS (remove the .glassEffect) or MacOS with simple changes.
 
+The **TvViewer** App contains an initial database of TV stations (8618),
+ that is copied to the *applicationSupportDirectory* folder for use by SwiftData. 
+
+The App also contains the code (IPTVImporter) for downloading the initial data from the server.
+
 
 ## References
 

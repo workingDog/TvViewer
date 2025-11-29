@@ -23,11 +23,12 @@ actor LogoService {
         do {
             let (data, _) = try await URLSession.shared.data(from: logoURL)
             tvlogo.logoData = data
-        } catch {
-            print(error)
+        }
+        catch {
+          //  print(error)
         }
     }
-    
+
     func logoImage(for tvlogo: TVLogo) async -> UIImage {
         // If no data cached, fetch it
         if tvlogo.logoData == nil {
@@ -83,15 +84,15 @@ final class TVStation: Codable {
     @Relationship(deleteRule: .cascade) var feeds: [TVFeed] = []
     @Relationship(deleteRule: .cascade) var logos: [TVLogo] = []
     @Relationship(deleteRule: .cascade) var streams: [TVStream] = []
-    @Relationship(deleteRule: .cascade) var guides: [TVGuide] = []
-    
-    @Relationship(deleteRule: .cascade) var categoriesRel: [TVCategory] = []
-    @Relationship(deleteRule: .cascade) var languagesRel: [TVLanguage] = []
     @Relationship(deleteRule: .cascade) var countryRel: TVCountry?
-    @Relationship(deleteRule: .cascade) var subdivisions: [TVSubdivision] = []
-    @Relationship(deleteRule: .cascade) var cities: [TVCity] = []
     @Relationship(deleteRule: .cascade) var regions: [TVRegion] = []
     @Relationship(deleteRule: .cascade) var timezonesRel: [TVTimezone] = []
+    
+    // not used
+//    @Relationship(deleteRule: .cascade) var categoriesRel: [TVCategory] = []
+//    @Relationship(deleteRule: .cascade) var guides: [TVGuide] = []
+//    @Relationship(deleteRule: .cascade) var subdivisions: [TVSubdivision] = []
+//    @Relationship(deleteRule: .cascade) var cities: [TVCity] = []
 
     init(id: String,
          name: String,
@@ -463,15 +464,15 @@ final class TVLanguage: Codable {
     var name: String
     @Attribute(.unique) var code: String
 
-    var station: TVStation?
+    var feed: TVFeed?
 
     init(name: String,
          code: String,
-         station: TVStation? = nil)
+         feed: TVFeed? = nil)
     {
         self.name = name
         self.code = code
-        self.station = station
+        self.feed = feed
     }
 
     enum CodingKeys: String, CodingKey {
