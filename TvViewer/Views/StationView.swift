@@ -23,7 +23,9 @@ struct StationView: View {
     @State private var showConfirm = false
     @State private var showWeb = false
     
-    @State private var logoIcon: UIImage = LogoService.defaultTvLogo()
+    @State private var logoIcon: UIImage = Networker.defaultTvLogo()
+    
+    let networker = Networker()
     
     var body: some View {
         VStack {
@@ -104,7 +106,7 @@ struct StationView: View {
             WebViewScreen(showWeb: $showWeb, station: station)
         }
         .task {
-            logoIcon = await LogoService.shared.tvLogoImage(for: station)
+            logoIcon = await networker.tvLogoImage(for: station)
         }
     }
     

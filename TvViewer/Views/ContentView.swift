@@ -44,7 +44,6 @@ struct ContentView: View {
                             
                         case .stations: SearchStationView(stations: stations)
                     }
-                    
                 }
             }
         }
@@ -56,6 +55,4 @@ struct ContentView: View {
         .environment(playerManager)
         .environment(selector)
     }
-    
 }
-

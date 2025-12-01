@@ -21,6 +21,10 @@ Similarly, when you search for particular **Stations**.
 
 Tap on the **globe** icon of a TV station to bring its internet home page, if it has one.
 
+Tap on the **gear** icon to setup various settings. 
+Downloading **New data** from the server takes sometimes to complete. Do not close 
+the App or dismiss the panel while the data is downloading.
+
 
 ## Note
 

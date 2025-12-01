@@ -7,109 +7,105 @@
 import Foundation
 import SwiftData
 
-/*
-  temporarily add this to ContentView
- //        .task {
- //            let importer = IPTVImporter(context: modelContext)
- //            do {
- //                try await importer.doImportAll()
- //            } catch {
- //                print(error)
- //            }
- //        }
- 
- // also look at TvViewerApp.swift for copying the pre-load db
- 
- */
-
-enum APIError: Swift.Error, LocalizedError {
-    
-    case unknown, apiError(reason: String), parserError(reason: String), networkError(from: URLError)
-    
-    var errorDescription: String? {
-        switch self {
-            case .unknown: return "Unknown error"
-            case .apiError(let reason), .parserError(let reason): return reason
-            case .networkError(let from): return from.localizedDescription
-        }
-    }
-}
 
 // populate the SwiftData database from data fetched from the server.
-actor IPTVImporter {
-
-    private let iptvServer = "https://iptv-org.github.io/api"
-
+struct IPTVImporter {
+    
+    let networker = Networker()
     let context: ModelContext
-
+    
     init(context: ModelContext) {
         self.context = context
     }
+    
+    func getStations() throws -> [TVStation] {
+        try context.fetch(FetchDescriptor<TVStation>())
+    }
+    
+    func getCurrentFavourites() async -> [String] {
+        do {
+            let stations = try getStations()
+            return stations.filter( { $0.isFavourite }).map(\.id)
+        } catch {
+            print(error)
+        }
+        return []
+    }
+    
+    func removeDatabase() async {
+        let appSupport = try! FileManager.default.url(
+            for: .applicationSupportDirectory,
+            in: .userDomainMask,
+            appropriateFor: nil,
+            create: true
+        )
+        
+        let names = [
+            "tvstations.sqlite",
+            "tvstations.sqlite-wal",
+            "tvstations.sqlite-shm"
+        ]
+        
+        for name in names {
+            let dest = appSupport.appendingPathComponent(name)
+            do {
+                try FileManager.default.removeItem(at: dest)
+            } catch {
+                print("Error removing \(name): \(error)")
+            }
+        }
 
+    }
+    
     // use this to import all the data from the iptvServer
     // and save everything into SwiftData "tvstations.sqlite"
     // takes time to complete
-    func doImportAll() async throws {
+    func reImportAll(_ progress: ProgressModel) async throws {
         do {
-            try await importAll()
-            print("Imported all IPTV data into SwiftData")
+            // remember the current favourites
+            let favourites = await getCurrentFavourites()
+            await removeDatabase()
+            try await importAll(progress)
+            // return the favourites
+            let stations = try getStations()
+            for favourite in favourites {
+                if let station = stations.first(where: {$0.id == favourite}) {
+                    station.isFavourite = true
+                }
+            }
         } catch {
             print("Failed: \(error)")
         }
     }
-
-    private func fetchJSON<T: Decodable>(_ endpoint: String) async throws -> [T] {
-        guard let url = URL(string: "\(iptvServer)/\(endpoint).json") else {
-            throw URLError(.badURL)
-        }
-        let (data, response) = try await URLSession.shared.data(from: url)
-        try validate(response)
-        return try JSONDecoder().decode([T].self, from: data)
-    }
     
-    func validate(_ response: URLResponse) throws {
-        guard let http = response as? HTTPURLResponse else { return }
-
-        switch http.statusCode {
-            case 200..<300: return
-            case 401: throw APIError.apiError(reason: "Unauthorized")
-            case 402: throw APIError.apiError(reason: "Quota exceeded")
-            case 403: throw APIError.apiError(reason: "Resource forbidden")
-            case 404: throw APIError.apiError(reason: "Resource not found")
-            case 429: throw APIError.apiError(reason: "Requesting too quickly")
-            case 405..<500: throw APIError.apiError(reason: "Client error")
-            case 500..<600: throw APIError.apiError(reason: "Server error")
-            default: throw APIError.networkError(from: URLError(.badServerResponse))
-        }
-    }
-
-    func importAll() async throws {
+    func importAll(_ progress: ProgressModel) async throws {
         
-        print("---> importAll start")
-
+        print("---> importAll start <---")
+        await MainActor.run { progress.value = 0.1 }  // just to show something is going on
+        
         // fetch raw stations (the channels)
-        let stations: [TVStation] = try await fetchJSON("channels")
+        let stations: [TVStation] = try await networker.fetchJSON("channels")
         print("---> stations: \(stations.count)")
         
         // fetch all other data
-        let feeds: [TVFeed] = try await fetchJSON("feeds")
+        let feeds: [TVFeed] = try await networker.fetchJSON("feeds")
         print("---> feeds: \(feeds.count)")
-        let logos: [TVLogo] = try await fetchJSON("logos")
+        let logos: [TVLogo] = try await networker.fetchJSON("logos")
         print("---> logos: \(logos.count)")
-        let streams: [TVStream] = try await fetchJSON("streams")
+        let streams: [TVStream] = try await networker.fetchJSON("streams")
         print("---> streams: \(streams.count)")
-        let countries: [TVCountry] = try await fetchJSON("countries")
+        let countries: [TVCountry] = try await networker.fetchJSON("countries")
         print("---> countries: \(countries.count)")
-        let regions: [TVRegion] = try await fetchJSON("regions")
+        let regions: [TVRegion] = try await networker.fetchJSON("regions")
         print("---> regions: \(regions.count)")
-        let timezones: [TVTimezone] = try await fetchJSON("timezones")
+        let timezones: [TVTimezone] = try await networker.fetchJSON("timezones")
         print("---> timezones: \(timezones.count)")
-
+        
         // not usefull, skip
-//        let categories: [TVCategory] = try await fetchJSON("categories")
-//        print("---> categories: \(categories.count)")
-//        let languages: [TVLanguage] = try await fetchJSON("languages")
-//        print("---> languages: \(languages.count)")
+        //        let categories: [TVCategory] = try await fetchJSON("categories")
+        //        print("---> categories: \(categories.count)")
+        //        let languages: [TVLanguage] = try await fetchJSON("languages")
+        //        print("---> languages: \(languages.count)")
         //        let subdivisions: [TVSubdivision] = try await fetchJSON("subdivisions")
         //        print("---> subdivisions: \(subdivisions.count)")
         //        let cities: [TVCity] = try await fetchJSON("cities")
@@ -117,19 +113,37 @@ actor IPTVImporter {
         //        let guides: [TVGuide] = try await fetchJSON("guides")
         //        print("---> guides: \(guides.count)")
         
-        print("\n---> Linking \n")
-
+        await MainActor.run { progress.value = 0.2 } // just to show something is going on
+        
+        print("\n---> Linking <---\n")
+        
         // Index stations by ID for linking
         let stationsByID = Dictionary(uniqueKeysWithValues: stations.map { ($0.id, $0) })
-
+        
         //
         // Link feeds, logos, streams, guides to the corresponding station
         //
+        
+        // only streams with non-nil channel reference
+        let filteredStreams = streams.filter({$0.channel != nil})
+        print("---> filteredStreams.count: \(filteredStreams.count)")
+        
+        // the total number of progress steps
+        let total = feeds.count + logos.count + (2 * filteredStreams.count) + countries.count
+        print("---> total: \(total)")
+        
+        await MainActor.run {
+            progress.completed = 0
+        }
         
         for feed in feeds {
             if let station = stationsByID[feed.channel] {
                 station.feeds.append(feed)
                 feed.station = station
+            }
+            await MainActor.run {
+                progress.completed += 1
+                progress.value = Double(progress.completed) / Double(total)
             }
         }
         print("---> Link feeds")
@@ -139,40 +153,48 @@ actor IPTVImporter {
                 station.logos.append(logo)
                 logo.station = station
             }
+            await MainActor.run {
+                progress.completed += 1
+                progress.value = Double(progress.completed) / Double(total)
+            }
         }
         print("---> Link logos")
         
-        // only streams with non-nil channel reference
-        let filteredStreams = streams.filter({$0.channel != nil})
-        print("---> filteredStreams.count: \(filteredStreams.count)")
-
         for stream in filteredStreams {
             if let channelID = stream.channel, let station = stationsByID[channelID] {
                 station.streams.append(stream)
                 stream.station = station
             }
+            await MainActor.run {
+                progress.completed += 1
+                progress.value = Double(progress.completed) / Double(total)
+            }
         }
         print("---> Link streams")
+        
+        //        print("---> skip Link guides: \(guides.count)")
+        //        for guide in guides {
+        //            if let channelID = guide.channel, let station = stationsByID[channelID] {
+        //                station.guides.append(guide)
+        //                guide.station = station
+        //            }
+        //        }
+        //        print("---> Link guides")
         
         // only stations with at least one stream, no use otherwise
         let filteredStations = stations.filter({$0.streams.count > 0})
         print("---> filteredStations.count: \(filteredStations.count)")
 
-//        print("---> skip Link guides: \(guides.count)")
-//        for guide in guides {
-//            if let channelID = guide.channel, let station = stationsByID[channelID] {
-//                station.guides.append(guide)
-//                guide.station = station
-//            }
-//        }
-//        print("---> Link guides")
-        
         // count the number of stations in each country
         for country in countries {
             country.totalStations = filteredStations.filter( { $0.country == country.code }).count
+            await MainActor.run {
+                progress.completed += 1
+                progress.value = Double(progress.completed) / Double(total)
+            }
         }
 
-        var progress = 0
+        print("---> Linking categories, country, regions, timezones")
         // Link categories, country, regions, timezones
         for station in filteredStations {
             // countryRel
@@ -190,22 +212,29 @@ actor IPTVImporter {
             //            station.subdivisions = subdivisions.filter { $0.country == station.country }
             //            // cities
             //            station.cities = cities.filter { $0.country == station.country }
-
-            if progress.isMultiple(of: 1000) {
-                  print("------> progress: \(progress)")
-              }
-              progress += 1
+            
+            await MainActor.run {
+                progress.completed += 1
+                progress.value = Double(progress.completed) / Double(total)
+            }
         }
-
+        
         print("---> saving to SwiftData")
         
-        // Save everything into SwiftData
+        // insert everything into SwiftData
         for station in filteredStations {
             context.insert(station)
         }
-        try context.save()
         
+        // save
+        do {
+            try context.save()
+        } catch {
+            print("----------> Error saving to SwiftData: \(error) <----------")
+        }
+
+        await MainActor.run { progress.value = 1.0 }
         print("-------> DONE saving all to SwiftData\n")
     }
-
+    
 }

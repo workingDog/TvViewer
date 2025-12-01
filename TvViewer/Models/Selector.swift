@@ -17,21 +17,25 @@ class Selector {
     var searchStation: String = ""
     var searchCountry: String = ""
     var pingSound: Bool = true
+    var updateDate: Date = Date()
     
     static let keyTag: String = "tag"
     static let keyPingSound: String = "pingSound"
+    static let keyUpdateDate: String = "updateDate"
     
     
     func storeSettings() {
         UserDefaults.standard.set(self.tag.rawValue, forKey: Selector.keyTag)
         UserDefaults.standard.set(self.pingSound, forKey: Selector.keyPingSound)
+        UserDefaults.standard.set(self.updateDate, forKey: Selector.keyUpdateDate)
     }
     
     func retrieveSettings() {
         let xtag = UserDefaults.standard.string(forKey: Selector.keyTag) ?? StationTag.all.rawValue
         self.tag = StationTag(rawValue: xtag) ?? .all
-        
         self.pingSound = UserDefaults.standard.bool(forKey: Selector.keyPingSound)
+        let xdate = UserDefaults.standard.object(forKey: Selector.keyUpdateDate) as? Date
+        self.updateDate = (xdate != nil) ? xdate! : Date()
     }
     
 }

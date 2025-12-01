@@ -9,61 +9,9 @@ import SwiftData
 import UIKit
 
 
-// helper actor to fetch logo icon
-actor LogoService {
-    static let shared = LogoService()
-    
-    static func defaultTvLogo() -> UIImage {
-        UIImage(named: "teve")!
-    }
-    
-    private func fetchLogo(for tvlogo: TVLogo) async {
-        if tvlogo.url == "null" || tvlogo.url.isEmpty { return }
-        guard let logoURL = URL(string: tvlogo.url) else { return }
-        do {
-            let (data, _) = try await URLSession.shared.data(from: logoURL)
-            tvlogo.logoData = data
-        }
-        catch {
-          //  print(error)
-        }
-    }
-
-    func logoImage(for tvlogo: TVLogo) async -> UIImage {
-        // If no data cached, fetch it
-        if tvlogo.logoData == nil {
-            await fetchLogo(for: tvlogo)
-            if let data = tvlogo.logoData, let img = UIImage(data: data) {
-                return img
-            } else {
-                let fallback = LogoService.defaultTvLogo()
-                tvlogo.logoData = fallback.pngData()
-                return fallback
-            }
-        }
-        // If data exists, try to decode it
-        if let data = tvlogo.logoData, let img = UIImage(data: data) {
-            return img
-        } else {
-            let fallback = LogoService.defaultTvLogo()
-            tvlogo.logoData = fallback.pngData()
-            return fallback
-        }
-    }
-    
-    func tvLogoImage(for tvStation: TVStation) async -> UIImage {
-        if let firstLogo = tvStation.logos.first {
-            return await logoImage(for: firstLogo)
-        } else {
-            return LogoService.defaultTvLogo()
-        }
-    }
-    
-}
-
 @Model
 final class TVStation: Codable {
-    @Attribute(.unique) var id: String
+    @Attribute(.unique) var id: String  // <--- the channel id
     
     // stored, but not encoded or decoded
     var isFavourite: Bool = false
