@@ -8,7 +8,7 @@ import Foundation
 import SwiftData
 
 
-// populate the SwiftData database from data fetched from the server.
+// populate the SwiftData database with data fetched from the server.
 struct IPTVImporter {
     
     let networker = Networker()
@@ -121,7 +121,7 @@ struct IPTVImporter {
         let stationsByID = Dictionary(uniqueKeysWithValues: stations.map { ($0.id, $0) })
         
         //
-        // Link feeds, logos, streams, guides to the corresponding station
+        // Link feeds, logos, streams, etc... to the corresponding station
         //
         
         // only streams with non-nil channel reference
@@ -172,15 +172,6 @@ struct IPTVImporter {
         }
         print("---> Link streams")
         
-        //        print("---> skip Link guides: \(guides.count)")
-        //        for guide in guides {
-        //            if let channelID = guide.channel, let station = stationsByID[channelID] {
-        //                station.guides.append(guide)
-        //                guide.station = station
-        //            }
-        //        }
-        //        print("---> Link guides")
-        
         // only stations with at least one stream, no use otherwise
         let filteredStations = stations.filter({$0.streams.count > 0})
         print("---> filteredStations.count: \(filteredStations.count)")
@@ -205,13 +196,6 @@ struct IPTVImporter {
             station.regions = regions.filter { $0.countries.contains(station.country) }
             // timezones
             station.timezonesRel = timezones.filter { $0.countries.contains(station.country) }
-            
-            // categoriesRel
-            //            station.categoriesRel = categories.filter { station.categories.contains($0.id) }
-            // subdivisions
-            //            station.subdivisions = subdivisions.filter { $0.country == station.country }
-            //            // cities
-            //            station.cities = cities.filter { $0.country == station.country }
             
             await MainActor.run {
                 progress.completed += 1

@@ -23,7 +23,7 @@ enum APIError: Swift.Error, LocalizedError {
 }
 
 // fetch data from the server.
-actor Networker {
+struct Networker {
     
     private let iptvServer = "https://iptv-org.github.io/api"
     
