@@ -30,10 +30,15 @@ struct Networker {
     init() { }
     
     func fetchJSON<T: Decodable>(_ endpoint: String) async throws -> T {
-        guard let url = URL(string: "\(iptvServer)/\(endpoint).json") else {
+        guard let theUrl = URL(string: "\(iptvServer)/\(endpoint).json") else {
             throw URLError(.badURL)
         }
-        let (data, response) = try await URLSession.shared.data(from: url)
+        var request = URLRequest(url: theUrl)
+        request.httpMethod = "GET"
+        request.setValue("TvViewer/1.0", forHTTPHeaderField: "User-Agent")
+        request.setValue("application/json", forHTTPHeaderField: "Accept")
+
+        let (data, response) = try await URLSession.shared.data(for: request)
         try validate(response)
         return try JSONDecoder().decode(T.self, from: data)
     }

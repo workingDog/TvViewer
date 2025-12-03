@@ -60,12 +60,15 @@ struct IPTVImporter {
     // use this to import all the data from the iptvServer
     // and save everything into SwiftData "tvstations.sqlite"
     // takes time to complete
-    func reImportAll(_ progress: ProgressModel) async throws {
+    func doImportAll(_ progress: ProgressModel) async throws {
         do {
             // remember the current favourites
             let favourites = await getCurrentFavourites()
+            
             await removeDatabase()
-            try await importAll(progress)
+            
+            try await importData(progress)
+            
             // return the favourites
             let stations = try getStations()
             for favourite in favourites {
@@ -78,9 +81,9 @@ struct IPTVImporter {
         }
     }
     
-    func importAll(_ progress: ProgressModel) async throws {
+    func importData(_ progress: ProgressModel) async throws {
         
-        print("---> importAll start <---")
+        print("---> importData start <---")
         await MainActor.run { progress.value = 0.1 }  // just to show something is going on
         
         // fetch raw stations (the channels)
@@ -94,7 +97,7 @@ struct IPTVImporter {
         print("---> logos: \(logos.count)")
         let streams: [TVStream] = try await networker.fetchJSON("streams")
         print("---> streams: \(streams.count)")
-        let countries: [TVCountry] = try await networker.fetchJSON("countries")
+        var countries: [TVCountry] = try await networker.fetchJSON("countries")
         print("---> countries: \(countries.count)")
         let regions: [TVRegion] = try await networker.fetchJSON("regions")
         print("---> regions: \(regions.count)")
@@ -114,7 +117,7 @@ struct IPTVImporter {
         //        print("---> guides: \(guides.count)")
         
         await MainActor.run { progress.value = 0.2 } // just to show something is going on
-        
+ 
         print("\n---> Linking <---\n")
         
         // Index stations by ID for linking

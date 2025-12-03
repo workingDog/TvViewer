@@ -119,7 +119,7 @@ struct SettingsView: View {
                                 if let importer {
                                     Task {
                                         do {
-                                            try await importer.reImportAll(progressModel)
+                                            try await importer.doImportAll(progressModel)
                                             selector.updateDate = Date()
                                         } catch {
                                             print("----> SettingsView error: \(error)")
