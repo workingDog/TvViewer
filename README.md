@@ -4,7 +4,7 @@
 
 <p float="left">
   <img src="ScreenShots/picture1.png"  width="200"  height="400" />
-  <img src="ScreenShots/picture2.png"  width="200"  height="400" /> 
+  <img src="ScreenShots/picture2a.png"  width="200"  height="400" /> 
   <img src="ScreenShots/picture3.png"  width="200"  height="400" /> 
 </p>
 

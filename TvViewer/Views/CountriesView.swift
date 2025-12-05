@@ -101,7 +101,7 @@ struct CountryCard: View {
     }
 }
 
-
+/*
 struct SearchBar: View {
     @Binding var text: String
     
@@ -202,4 +202,4 @@ struct CountryRow: View {
         .shadow(color: .black.opacity(0.6), radius: 4, x: 0, y: 3)
     }
 }
-
+*/
