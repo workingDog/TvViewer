@@ -6,12 +6,13 @@
 //
 import Foundation
 import SwiftData
+import SwiftUI
 
 
 // populate the SwiftData database with data fetched from the server.
 struct IPTVImporter {
+    @Environment(\.networker) private var networker
     
-    let networker = Networker()
     let context: ModelContext
     
     init(context: ModelContext) {

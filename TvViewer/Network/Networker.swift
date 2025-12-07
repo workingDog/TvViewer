@@ -5,8 +5,8 @@
 //  Created by Ringo Wathelet on 2025/11/30.
 //
 import Foundation
-import SwiftData
 import UIKit
+import SwiftUI
 
 
 enum APIError: Swift.Error, LocalizedError {
@@ -19,6 +19,17 @@ enum APIError: Swift.Error, LocalizedError {
         case .apiError(let reason), .parserError(let reason): return reason
         case .networkError(let from): return from.localizedDescription
         }
+    }
+}
+
+struct NetworkerKey: EnvironmentKey {
+    static let defaultValue = Networker()
+}
+
+extension EnvironmentValues {
+    var networker: Networker {
+        get { self[NetworkerKey.self] }
+        set { self[NetworkerKey.self] = newValue }
     }
 }
 

@@ -15,17 +15,16 @@ import AVKit
 struct StationView: View {
     @Environment(\.modelContext) private var modelContext
     @Environment(PlayerManager.self) var playerManager
+    @Environment(\.networker) private var networker
     @Environment(ColorsModel.self) var colorsModel
     @Environment(Selector.self) var selector
-    
+
     var station: TVStation
     
     @State private var showConfirm = false
     @State private var showWeb = false
     
     @State private var logoIcon: UIImage = Networker.defaultTvLogo()
-    
-    let networker = Networker()
     
     var body: some View {
         VStack {
