@@ -31,7 +31,7 @@ class PlayerManager {
             try session.setCategory(.playback, mode: .default)
             try session.setActive(true)
         } catch {
-            print("---> AudioSession error:", error)
+            AppLogger.logPublic(error)
         }
     }
     

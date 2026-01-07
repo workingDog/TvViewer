@@ -122,7 +122,7 @@ struct SettingsView: View {
                                             try await importer.doImportAll(progressModel)
                                             selector.updateDate = Date()
                                         } catch {
-                                            print("----> SettingsView error: \(error)")
+                                            AppLogger.logPublic(error)
                                         }
                                     }
                                 }

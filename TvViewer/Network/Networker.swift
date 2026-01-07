@@ -83,7 +83,7 @@ struct Networker {
             tvlogo.logoData = data
         }
         catch {
-            //  print(error)
+            AppLogger.logPublic(error)
         }
     }
     

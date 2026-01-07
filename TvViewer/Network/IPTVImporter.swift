@@ -28,7 +28,7 @@ struct IPTVImporter {
             let stations = try getStations()
             return stations.filter( { $0.isFavourite }).map(\.id)
         } catch {
-            print(error)
+            AppLogger.logPublic(error)
         }
         return []
     }
@@ -52,7 +52,7 @@ struct IPTVImporter {
             do {
                 try FileManager.default.removeItem(at: dest)
             } catch {
-                print("Error removing \(name): \(error)")
+                AppLogger.logPublic("Error removing \(name):", error)
             }
         }
 
@@ -78,7 +78,7 @@ struct IPTVImporter {
                 }
             }
         } catch {
-            print("Failed: \(error)")
+            AppLogger.logPublic(error)
         }
     }
     
@@ -218,7 +218,7 @@ struct IPTVImporter {
         do {
             try context.save()
         } catch {
-            print("----------> Error saving to SwiftData: \(error) <----------")
+            AppLogger.logPublic("Error saving to SwiftData:", error)
         }
 
         await MainActor.run { progress.value = 1.0 }
