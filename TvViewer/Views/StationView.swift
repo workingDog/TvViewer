@@ -79,6 +79,7 @@ struct StationView: View {
                 .lineLimit(1)
                 .padding(5)
         }
+        .frame(maxWidth: .infinity)
         .contentShape(RoundedRectangle(cornerRadius: 12))
         .onTapGesture {
             if selector.pingSound {
