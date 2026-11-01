@@ -26,12 +26,7 @@ class ColorsModel {
     static let keyBackColor: String = "backColor"
     static let keyStationBackColor: String = "stationBackColor"
     static let keyCountryBackColor: String = "countryBackColor"
-    
-    // convenience color gradient
-    var gradient: LinearGradient {
-        LinearGradient(gradient: Gradient(colors: [backColor.opacity(1), backColor.opacity(0.3)]), startPoint: .top, endPoint: .bottom)
-    }
-    
+
     // store settings in UserDefaults
     func storeSettings() {
         saveColor(favouriteColor, key: ColorsModel.keyFavouriteColor)

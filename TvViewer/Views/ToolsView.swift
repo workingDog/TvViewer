@@ -32,6 +32,7 @@ struct ToolsView: View {
                 } label: {
                     Image(systemName: "gear")
                 }
+                .tint(.primary)
                 .font(.system(size: 26))
                 .padding(5)
                 
