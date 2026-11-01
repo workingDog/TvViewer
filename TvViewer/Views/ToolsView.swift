@@ -23,14 +23,7 @@ struct ToolsView: View {
                     .padding(5)
                 Spacer()
                 
-                Picker("", selection: $selector.view) {
-                    ForEach(ViewTypes.allCases) { tool in
-                        Text(tool.rawValue).tag(tool)
-                    }
-                }
-                .pickerStyle(.segmented)
-                .frame(width: 250)
-                .padding(.horizontal)
+                tools().frame(width: 222).padding(.horizontal)
                 
                 Spacer()
                 
@@ -44,7 +37,6 @@ struct ToolsView: View {
                 
             }
             .background(.ultraThinMaterial)
-            .glassEffect(.regular.tint(colorsModel.backColor).interactive(), in: RoundedRectangle(cornerRadius: 12))
             .clipShape(RoundedRectangle(cornerRadius: 16))
             .shadow(radius: 2)
             .padding(.horizontal)
@@ -54,6 +46,58 @@ struct ToolsView: View {
                 .environment(selector)
                 .environment(colorsModel)
                 .presentationDetents([.large])
+        }
+    }
+    
+    
+    @ViewBuilder
+    func tools() -> some View {
+        HStack(spacing: 30) {
+            ForEach([ViewTypes.favourites, ViewTypes.countries, ViewTypes.stations], id: \.self) { view in
+                Button {
+                    selector.view = view
+                } label: {
+                    if view == .favourites {
+                        Image(systemName: "heart.fill").padding(5)
+                            .font(.title)
+                            .foregroundStyle(colorsModel.favouriteColor)
+                            .frame(height: 45)
+                            .background(selector.view == view ? Color.primary : Color.clear)
+                            .contentShape(Rectangle())
+                            .overlay {
+                                Image(systemName: "heart")
+                                    .font(.title)
+                                    .foregroundStyle(.black)
+                            }
+                    } else {
+                        Image(systemName: symbol(for: view)).padding(5)
+                            .font(.title)
+                            .foregroundStyle(iconColor(for: view))
+                            .frame(height: 45)
+                            .background(selector.view == view ? Color.primary : Color.clear)
+                            .contentShape(Rectangle())
+                    }
+                }
+                .buttonStyle(.plain)
+                .glassEffect()
+            }
+        }
+        .background(.quaternary.opacity(0.5), in: RoundedRectangle(cornerRadius: 9))
+    }
+    
+    private func symbol(for view: ViewTypes) -> String {
+        switch view {
+            case .favourites: "heart.fill"
+            case .countries: "globe"
+            case .stations: "antenna.radiowaves.left.and.right"
+        }
+    }
+    
+    private func iconColor(for view: ViewTypes) -> Color {
+        switch view {
+            case .favourites: colorsModel.favouriteColor
+            case .countries: .primary
+            case .stations: .primary
         }
     }
 }

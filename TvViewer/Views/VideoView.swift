@@ -26,7 +26,14 @@ struct VideoView: View {
                 Spacer()
             }
         }
-        .onAppear { playerManager.player?.play() }
+        .onAppear {
+//            if let station = playerManager.station {
+//                if let stream = station.streams.first?.url, let url = URL(string: stream) {
+//                    print("---> \(station.name) \n \(stream) \n")
+//                }
+//            }
+ 
+            playerManager.player?.play() }
         .onDisappear {
             playerManager.player?.pause()
             playerManager.station = nil

@@ -22,7 +22,7 @@ struct CountryView: View {
     
     var body: some View {
         ZStack {
-            colorsModel.gradient.ignoresSafeArea()
+            AppBackground().ignoresSafeArea()
             VStack {
                 if filteredStations.isEmpty {
                     ProgressView()

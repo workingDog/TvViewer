@@ -10,6 +10,7 @@ import AVFoundation
 import Foundation
 import UIKit
 import AVKit
+import SwiftData
 
 
 struct StationView: View {

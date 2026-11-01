@@ -5,6 +5,7 @@
 //  Created by Ringo Wathelet on 2025/11/24.
 //
 import SwiftUI
+import SwiftData
 
 
 struct SettingsView: View {
@@ -23,7 +24,7 @@ struct SettingsView: View {
         @Bindable var colorsModel = colorsModel
         
         ZStack {
-            colorsModel.gradient.ignoresSafeArea()
+            AppBackground().ignoresSafeArea()
             
             VStack(alignment: .leading, spacing: 10) {
                 
@@ -70,17 +71,7 @@ struct SettingsView: View {
                                 .labelsHidden()
                             Spacer()
                         }
-                        
-                        HStack {
-                            Text("Background color ")
-                            Image(systemName: "backpack.fill")
-                                .font(.title)
-                                .foregroundStyle(colorsModel.backColor)
-                            ColorPicker("", selection: $colorsModel.backColor)
-                                .labelsHidden()
-                            Spacer()
-                        }
-                        
+
                         HStack {
                             Text("Favourite Color ")
                             Image(systemName: "heart.fill")
@@ -90,17 +81,7 @@ struct SettingsView: View {
                                 .labelsHidden()
                             Spacer()
                         }
-                        
-                        HStack {
-                            Text("Network Color ")
-                            Image(systemName: "network")
-                                .font(.title)
-                                .foregroundStyle(colorsModel.netColor)
-                            ColorPicker("", selection: $colorsModel.netColor)
-                                .labelsHidden()
-                            Spacer()
-                        }
-                        
+
                         HStack {
                             Text("Station select sound  ")
                             Image(systemName: "hand.tap.fill")

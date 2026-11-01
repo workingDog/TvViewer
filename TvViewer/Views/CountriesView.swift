@@ -5,6 +5,7 @@
 //  Created by Ringo Wathelet on 2025/11/24.
 //
 import SwiftUI
+import SwiftData
 
 
 struct CountriesView: View {
@@ -29,7 +30,7 @@ struct CountriesView: View {
         @Bindable var selector = selector
         NavigationStack {
             ZStack {
-                colorsModel.gradient.ignoresSafeArea()
+                AppBackground().ignoresSafeArea()
                 
                 ScrollView {
                     LazyVGrid(

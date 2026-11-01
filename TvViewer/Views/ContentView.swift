@@ -24,7 +24,7 @@ struct ContentView: View {
 
     var body: some View {
         ZStack(alignment: .top) {
-            colorsModel.gradient.ignoresSafeArea()
+            AppBackground().ignoresSafeArea()
                 .animation(.easeInOut(duration: 0.4), value: selector.view)
             
             if playerManager.showVideo {
@@ -51,6 +51,19 @@ struct ContentView: View {
             selector.retrieveSettings()
             colorsModel.retrieveSettings()
             print("\n----> stations: \(stations.count)\n")
+            
+            
+//            for station in stations.prefix(20) {
+//                if let stream = station.streams.first?.url, let url = URL(string: stream) {
+//                    print("---> \(station.name) \n \(stream) \n")
+//                }
+//            }
+            
+            /*
+             ABC News
+              https://c.mjh.nz/abc-news.m3u8
+             */
+            
         }
         .environment(playerManager)
         .environment(selector)

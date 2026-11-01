@@ -29,7 +29,7 @@ struct SearchStationView: View {
     var body: some View {
         @Bindable var selector = selector
         ZStack {
-            colorsModel.gradient.ignoresSafeArea()
+            AppBackground().ignoresSafeArea()
             
             VStack(alignment: .leading, spacing: 20) {
                 HStack {

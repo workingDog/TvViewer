@@ -98,7 +98,7 @@ struct IPTVImporter {
         print("---> logos: \(logos.count)")
         let streams: [TVStream] = try await networker.fetchJSON("streams")
         print("---> streams: \(streams.count)")
-        var countries: [TVCountry] = try await networker.fetchJSON("countries")
+        let countries: [TVCountry] = try await networker.fetchJSON("countries")
         print("---> countries: \(countries.count)")
         let regions: [TVRegion] = try await networker.fetchJSON("regions")
         print("---> regions: \(regions.count)")
