@@ -49,7 +49,6 @@ struct ToolsView: View {
         }
     }
     
-    
     @ViewBuilder
     func tools() -> some View {
         HStack(spacing: 30) {
