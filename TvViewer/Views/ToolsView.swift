@@ -89,7 +89,7 @@ struct ToolsView: View {
         switch view {
             case .favourites: "heart.fill"
             case .countries: "globe"
-            case .stations: "antenna.radiowaves.left.and.right"
+            case .stations: "tv.badge.wifi"
         }
     }
     
